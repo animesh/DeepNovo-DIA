@@ -1,3 +1,40 @@
+# Setup
+
+## Clone
+```bash
+git clone https://github.com/animesh/DeepNovo-DIA.git
+cd DeepNovo-DIA/
+```
+
+## Download [Knapsack matrix](https://drive.google.com/open?id=1aHDGphyzTo2hMMXlwkLCRVDp9JB9ph34) using gdown (note the change from id->uc in the link address)
+```bash
+pip install gdown --user
+gdown https://drive.google.com/uc?id=1aHDGphyzTo2hMMXlwkLCRVDp9JB9ph34 -O knapsack.npy.zip
+```
+
+## Download [Model/Data](ftp://massive.ucsd.edu/MSV000082368/other)
+```bash
+wget -r ftp://massive.ucsd.edu/MSV000082368/other
+```
+
+## Dependencies
+```bash
+pip install cython --user
+pip install biopython --user
+pip install pyteomics --user
+pip install --user tensorflow==1.2
+```
+
+### ImportError: No module named "deepnovo cython modules"
+```bash
+python deepnovo_cython_setup.py build_ext --inplace
+```
+
+## Test
+```bash
+python deepnovo_main.py --search_denovo --train_dir massive.ucsd.edu/MSV000082368/other/train.urine_pain.ioncnn.lstm --denovo_spectrum massive.ucsd.edu/MSV000082368/other/plasma/testing_plasma.spectrum.mgf --denovo_feature massive.ucsd.edu/MSV000082368/other/plasma/testing_plasma.feature.csv
+```
+
 # DeepNovo-DIA
 
 ## Latest update
