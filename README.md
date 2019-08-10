@@ -10,6 +10,7 @@ cd DeepNovo-DIA/
 ```bash
 pip install gdown --user
 gdown https://drive.google.com/uc?id=1aHDGphyzTo2hMMXlwkLCRVDp9JB9ph34 -O knapsack.npy.zip
+unzip knapsack.npy.zip
 ```
 
 ## Download [Model/Data](ftp://massive.ucsd.edu/MSV000082368/other)
@@ -33,6 +34,7 @@ python deepnovo_cython_setup.py build_ext --inplace
 ## Test
 ```bash
 python deepnovo_main.py --search_denovo --train_dir massive.ucsd.edu/MSV000082368/other/train.urine_pain.ioncnn.lstm --denovo_spectrum massive.ucsd.edu/MSV000082368/other/plasma/testing_plasma.spectrum.mgf --denovo_feature massive.ucsd.edu/MSV000082368/other/plasma/testing_plasma.feature.csv
+python deepnovo_main.py --test --target_file massive.ucsd.edu/MSV000082368/other/plasma/testing_plasma.feature.csv --predicted_file massive.ucsd.edu/MSV000082368/other/plasma/testing_plasma.feature.csv.deepnovo_denovo
 ```
 
 # DeepNovo-DIA
@@ -41,7 +43,7 @@ python deepnovo_main.py --search_denovo --train_dir massive.ucsd.edu/MSV00008236
 
 - Source code released.
 - From now on, we use a feature-based framework to unify DDA and DIA data analysis. The input data includes a pair of 1 spectrum mgf file and 1 precursor feature csv file. For DDA, 1 feature is associated with 1 spectrum. For DIA, 1 feature is associated with multiple spectra. Detailed formats can be found below.
- 
+
 ## General information
 
 - Publication: Deep learning enables de novo peptide sequencing from DIA mass spectrometry. Nature Methods, 2018. (https://www.nature.com/articles/s41592-018-0260-3)
@@ -73,7 +75,7 @@ The paths to the model folder and training/testing data can be specified as inst
 
     deepnovo_main --search_denovo --train_dir <training_folder> --denovo_spectrum <spectrum_file> --denovo_feature <feature_file>
 
-We have provided a pre-trained folder in the above repositories together with three testing datasets. 
+We have provided a pre-trained folder in the above repositories together with three testing datasets.
 The following example dataset will take approximately 20 minutes:
 
     --train_dir train.urine_pain.ioncnn.lstm
@@ -97,18 +99,18 @@ Each feature includes the following columns:
 - "m/z": the mass-to-charge ratio
 - "z": the charge
 - "rt_mean": the mean of the retention time range
-- "seq": the column is empty when running de novo sequencing. 
+- "seq": the column is empty when running de novo sequencing.
 In training/testing modes, it contains the target peptide sequence.
-- "scans": list of all MS/MS spectra collected for the feature so that 
+- "scans": list of all MS/MS spectra collected for the feature so that
 they are within the feature’s retention time range and their DIA m/z windows must cover the feature’s m/z.
-The spectra’s ids are separated by semicolon. 
+The spectra’s ids are separated by semicolon.
 The spectra’s ids can be used to locate the spectra in the mgf file.
-- "profile": intensity values over the retention time range. 
-The values are pairs of "time:intensity" and are separated by semicolon. 
+- "profile": intensity values over the retention time range.
+The values are pairs of "time:intensity" and are separated by semicolon.
 The time points align to the time of spectra in the column "scans".
 - "feature_area": precursor feature area estimated by the feature detection.
 
-The result is a tab-delimited text file with extension `.deepnovo_denovo`. 
+The result is a tab-delimited text file with extension `.deepnovo_denovo`.
 Each row includes the following columns:
 - feature_id
 - feature_area
@@ -130,15 +132,14 @@ For example:
 
     --target_file plasma/testing_plasma.feature.csv
     --predicted_file plasma/testing_plasma.feature.csv.deepnovo_denovo
-    
-As the testing feature file is labeled, it includes the target sequence for each feature. 
-Thus, DeepNovo can compare the predicted sequence to the target sequence and calculate the accuracy. 
-The result includes 3 files. The file with extension `.accuracy` shows the comparison result for each feature. 
+
+As the testing feature file is labeled, it includes the target sequence for each feature.
+Thus, DeepNovo can compare the predicted sequence to the target sequence and calculate the accuracy.
+The result includes 3 files. The file with extension `.accuracy` shows the comparison result for each feature.
 The other 2 files can be ignored. The accuracy summary is also printed out to the terminal.
 
 ### Step 3: Train a new model:
 
     deepnovo_main --train --train_dir <training_folder> --train_spectrum <train_spectrum_file> --train_feature <train_feature_file> --valid_spectrum <valid_spectrum_file> --valid_feature <valid_feature_file>
 
-In order to train a new model, you will need a training set and a validation set, each including a spectrum mgf file and a feature csv file. 
-
+In order to train a new model, you will need a training set and a validation set, each including a spectrum mgf file and a feature csv file.
